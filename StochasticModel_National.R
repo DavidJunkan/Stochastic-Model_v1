@@ -1,6 +1,8 @@
 #install.packages("moments")
+#install.packages("here")
 library(readxl)
 library(moments)
+library(here)
 
 n_simu    <- 15000
 y_base    <- 2024
@@ -8,8 +10,11 @@ mu        <- 0
 val_miss  <- -9.999
 n_spline  <- 1000
 
-root_path <- "D:/Dropbox/Stochastic Models/Code_replication/R_version"
-data_path <- "D:/Dropbox/Stochastic Models/Code_replication/R_version/Data"
+now_path  <- here::here()
+data_path <- file.path(now_path, "Data")
+root_path <- file.path(now_path, "Functions")
+outp_path <- file.path(now_path, "Output")
+
 setwd(root_path)
 source("gen_logn.R")
 source("f_detrend.R")
@@ -262,3 +267,20 @@ idx_bin <- 1
 
 bins_p_cor   <- gen_pbin(p_det_simu_cor,  bins, idx_bin)
 bins_yld_cor <- gen_pbin(yld_det_simu_cor, bins, idx_bin)
+
+colnames(p_det_simu_cor) <- crop_name
+colnames(yld_det_simu_cor) <- crop_name
+
+
+## Export results
+write.csv(
+  p_det_simu_cor,
+  file = file.path(outp_path, "simulated_prices.csv"),
+  row.names = FALSE
+)
+
+write.csv(
+  yld_det_simu_cor,
+  file = file.path(outp_path, "simulated_yields.csv"),
+  row.names = FALSE
+)
